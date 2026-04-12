@@ -73,6 +73,17 @@ def admin():
 
     return render_template("admin.html")
 
+@app.route("/check-api", methods=["POST"])
+@login_required
+def check_api():
+    flash("Функционал проверки в разработке", "info")
+    return redirect(url_for('main'))
+
+@app.route("/confirm-api", methods=["POST"])
+@login_required
+def confirm_api():
+    flash("Функционал подтверждения в разработке", "info")
+    return redirect(url_for('main'))
 
 if __name__ == '__main__':
     app.run(debug=True)
