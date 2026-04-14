@@ -4,19 +4,32 @@
 
 {% block extra_css %}
 <style>
-    /* Стили для админ-карточки */
+    /* Центрирование карточки */
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Карточка админа — тёмная */
     .admin-card {
-        background: white;
+        background: #1e1e2f;
         border-radius: 32px;
-        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
         max-width: 500px;
-        margin: 0 auto;
+        width: 100%;
+        margin: 0;
         padding: 40px 32px;
         transition: transform 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
     .admin-card:hover {
         transform: translateY(-5px);
     }
+
     .admin-header {
         text-align: center;
         margin-bottom: 36px;
@@ -24,14 +37,15 @@
     .admin-header h1 {
         font-size: 28px;
         font-weight: 600;
-        color: #1e293b;
+        color: #f1f5f9;
         margin-bottom: 8px;
     }
     .admin-header p {
-        color: #64748b;
+        color: #94a3b8;
         font-size: 14px;
         font-weight: 500;
     }
+
     .input-group {
         margin-bottom: 24px;
     }
@@ -39,7 +53,7 @@
         display: block;
         font-size: 14px;
         font-weight: 500;
-        color: #334155;
+        color: #cbd5e1;
         margin-bottom: 8px;
     }
     .input-wrapper {
@@ -50,7 +64,7 @@
     .input-wrapper i {
         position: absolute;
         left: 16px;
-        color: #94a3b8;
+        color: #64748b;
         font-size: 18px;
         pointer-events: none;
     }
@@ -59,17 +73,22 @@
         padding: 14px 16px 14px 48px;
         font-size: 15px;
         font-family: 'Inter', sans-serif;
-        border: 1.5px solid #e2e8f0;
+        border: 1.5px solid #334155;
         border-radius: 24px;
         outline: none;
         transition: all 0.2s ease;
-        background-color: #f8fafc;
+        background-color: #0f0f1a;
+        color: #e2e8f0;
     }
     .input-wrapper input:focus {
-        border-color: #667eea;
-        background-color: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #8b5cf6;
+        background-color: #1a1a2e;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
     }
+    .input-wrapper input::placeholder {
+        color: #475569;
+    }
+
     .checkbox-group {
         display: flex;
         align-items: center;
@@ -80,7 +99,13 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
+        accent-color: #8b5cf6;
     }
+    .checkbox-group label {
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
     .button-group {
         display: flex;
         gap: 15px;
@@ -116,12 +141,13 @@
         box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
         transform: scale(1.02);
     }
+
     .back-link {
         display: block;
         text-align: center;
         margin-top: 28px;
         font-size: 13px;
-        color: #64748b;
+        color: #94a3b8;
         text-decoration: none;
         font-weight: 500;
         transition: color 0.2s;
@@ -130,14 +156,18 @@
         margin-right: 6px;
     }
     .back-link:hover {
-        color: #667eea;
+        color: #8b5cf6;
         text-decoration: underline;
     }
+
     small {
         display: block;
         margin-top: 6px;
         font-size: 12px;
-        color: #64748b;
+        color: #94a3b8;
+    }
+    small i {
+        margin-right: 4px;
     }
 </style>
 {% endblock %}
@@ -149,7 +179,7 @@
         <p>Создание и удаление учётных записей</p>
     </div>
 
-    <form method="POST" action="{{ url_for('admin') }}">
+    <form method="POST" action="{{ url_for('.admin_panel') }}">
         <div class="input-group">
             <label class="input-label" for="login">Логин</label>
             <div class="input-wrapper">
@@ -159,12 +189,20 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label" for="password">Пароль <span style="font-weight: normal;">(видимый)</span></label>
+            <label class="input-label" for="true_login">Рабочий логин</label>
+            <div class="input-wrapper">
+                <i class="fas fa-id-card"></i>
+                <input type="text" id="true_login" name="true_login" placeholder="Введите рабочий логин" required>
+            </div>
+            <small><i class="fas fa-info-circle"></i> Используется для связи через API, не для входа в систему</small>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="password">Пароль</label>
             <div class="input-wrapper">
                 <i class="fas fa-key"></i>
                 <input type="text" id="password" name="password" placeholder="Введите пароль" required>
             </div>
-            <small><i class="fas fa-info-circle"></i> Пароль отображается открыто — только для администратора</small>
         </div>
 
         <div class="input-group">
@@ -185,7 +223,7 @@
         </div>
     </form>
 
-    <a href="{{ url_for('main') }}" class="back-link">
+    <a href="{{ url_for('main_page.main') }}" class="back-link">
         <i class="fas fa-arrow-left"></i> Вернуться на главную
     </a>
 </div>

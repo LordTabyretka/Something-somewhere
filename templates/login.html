@@ -4,34 +4,45 @@
 
 {% block extra_css %}
 <style>
-    /* Стили для карточки входа */
+    /* Центрирование карточки поверх базового тёмного фона */
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Карточка входа — тёмная, но светлее фона */
     .login-card {
-        background: white;
+        background: #1e1e2f;
         border-radius: 32px;
-        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
         max-width: 440px;
-        margin: 0 auto;
+        width: 100%;
         padding: 40px 32px;
         transition: transform 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
     .login-card:hover {
         transform: translateY(-5px);
     }
-    .login-header {
-        text-align: center;
-        margin-bottom: 36px;
-    }
+
     .login-header h1 {
         font-size: 28px;
         font-weight: 600;
-        color: #1e293b;
+        color: #f1f5f9;
         margin-bottom: 8px;
+        text-align: center;
     }
     .login-header p {
-        color: #64748b;
+        color: #94a3b8;
         font-size: 14px;
         font-weight: 500;
+        text-align: center;
     }
+
     .input-group {
         margin-bottom: 24px;
     }
@@ -39,7 +50,7 @@
         display: block;
         font-size: 14px;
         font-weight: 500;
-        color: #334155;
+        color: #cbd5e1;
         margin-bottom: 8px;
     }
     .input-wrapper {
@@ -50,7 +61,7 @@
     .input-wrapper i {
         position: absolute;
         left: 16px;
-        color: #94a3b8;
+        color: #64748b;
         font-size: 18px;
         pointer-events: none;
     }
@@ -59,23 +70,28 @@
         padding: 14px 16px 14px 48px;
         font-size: 15px;
         font-family: 'Inter', sans-serif;
-        border: 1.5px solid #e2e8f0;
+        border: 1.5px solid #334155;
         border-radius: 24px;
         outline: none;
         transition: all 0.2s ease;
-        background-color: #f8fafc;
+        background-color: #0f0f1a;
+        color: #e2e8f0;
     }
     .input-wrapper input:focus {
-        border-color: #667eea;
-        background-color: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #8b5cf6;
+        background-color: #1a1a2e;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
     }
+    .input-wrapper input::placeholder {
+        color: #475569;
+    }
+
     .btn-login {
         width: 100%;
         padding: 14px;
         border: none;
         border-radius: 28px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
         color: white;
         font-size: 16px;
         font-weight: 600;
@@ -89,7 +105,8 @@
     }
     .btn-login:hover {
         transform: scale(1.02);
-        box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.5);
+        background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
     }
 </style>
 {% endblock %}
@@ -101,7 +118,7 @@
         <p>Введите свои учётные данные</p>
     </div>
 
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="POST" action="{{ url_for('login_page.login') }}">
         <div class="input-group">
             <label class="input-label" for="login">Логин</label>
             <div class="input-wrapper">
