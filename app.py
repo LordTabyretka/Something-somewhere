@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, redirect, url_for, flash, request, render_template
+
+from API_requests import check_server_status, check_user_status, extend
 from flask_models import db, User
-from flask_login import LoginManager, login_required, logout_user, current_user
-from data_base import create_user, delete_user, get_user
+from flask_login import LoginManager, login_required, current_user
+from routes.admin import admin
+from routes.login import login_page
+from routes.main import main_page
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -12,78 +16,43 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+app.register_blueprint(admin)
+app.register_blueprint(login_page)
+app.register_blueprint(main_page)
 
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'login_page.login'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == 'POST':
-        entered_login = request.form.get('login')
-        password = request.form.get('password')
-        return get_user(entered_login, password)
-    else:
-        return render_template("login.html")
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("Вы вышли из системы", "info")
-    return redirect(url_for('login'))
-
-
-@app.route("/main")
-@login_required
-def main():
-    return render_template("main.html")
-
-
-@app.route("/admin", methods=["GET", "POST"])
-@login_required
-def admin():
-    if not current_user.is_admin:
-        flash("Доступ запрещён. Требуются права администратора.", "error")
-        return redirect(url_for('main'))
-    if request.method == 'POST':
-        new_login = request.form.get('login')
-        password = request.form.get('password')
-
-        if 'create' in request.form:
-            is_admin = request.form.get('is_admin') == 'yes'
-            success, msg = create_user(new_login, password, is_admin)
-            flash(msg, 'success' if success else 'error')
-            return redirect(url_for('admin'))
-
-        elif 'delete' in request.form:
-            if current_user.login == new_login:
-                flash("Нельзя удалить самого себя", "error")
-                return redirect(url_for('admin'))
-            success, msg = delete_user(new_login)
-            flash(msg, 'success' if success else 'error')
-            return redirect(url_for('admin'))
-
-        return redirect(url_for('admin'))
-
-    return render_template("admin.html")
-
-@app.route("/check-api", methods=["POST"])
+@app.route("/check-api", methods=["POST", "GET"])
 @login_required
 def check_api():
-    flash("Функционал проверки в разработке", "info")
-    return redirect(url_for('main'))
+    if request.method == "POST":
+        if 'check server status' in request.form:
+            success, msg = check_server_status()
+            flash(msg, 'success' if success else 'error')
+            return redirect(url_for('main_page.main'))
+        elif 'check user status' in request.form:
+            true_login = current_user.true_login
+            success, msg = check_user_status(true_login)
+            flash(msg, 'success' if success else 'error')
+            return redirect(url_for('main_page.main'))
+        elif 'extend' in request.form:
+            true_login = current_user.true_login
+            success, msg = extend(true_login)
+            flash(msg, 'success' if success else 'error')
+            return redirect(url_for('main_page.main'))
+    return redirect(url_for('main_page.main'))
+
 
 @app.route("/confirm-api", methods=["POST"])
 @login_required
 def confirm_api():
     flash("Функционал подтверждения в разработке", "info")
-    return redirect(url_for('main'))
+    return redirect(url_for('main_page.main'))
 
 if __name__ == '__main__':
     app.run(debug=True)
