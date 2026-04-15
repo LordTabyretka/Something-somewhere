@@ -1,10 +1,11 @@
 import calendar
 from datetime import datetime
 import requests
+import os
 
-JWT = "***"
+JWT = os.getenv("PANEL_API_KEY")
 url = "http://localhost:3003/api/users/by-username/"
-server_stats_url = "*****"
+server_stats_url = os.getenv("SERVER_CHECK_URL")
 igor_port = "http://localhost:3003/api/users"
 
 
@@ -44,6 +45,7 @@ def check_user_status(true_login):
     else:
         return False, "Запрос не выполнен, сервер не отвечает"
 
+
 def check_server_status():
     if (requests.get(server_stats_url)).status_code == 200:
         return True, 'Сервера работают'
@@ -81,6 +83,3 @@ def extend(true_login):
         return True, f"Подписка продлена до {new_expire}"
     else:
         return False, f"Ошибка продления: {patch_response.status_code}"
-
-
-
