@@ -79,6 +79,80 @@
     .section-title i {
         color: #8b5cf6;
     }
+
+    /* Блок трафика */
+    .traffic-card {
+        overflow: hidden;
+        position: relative;
+    }
+    .traffic-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+    .traffic-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .traffic-stat {
+        background: #2d2d44;
+        border-radius: 24px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .traffic-stat-label {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .traffic-stat-label i {
+        color: #8b5cf6;
+    }
+    .traffic-stat-value {
+        color: #f8fafc;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .traffic-stat-unit {
+        color: #94a3b8;
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 4px;
+    }
+    .traffic-progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #cbd5e1;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    .traffic-progress-wrapper {
+        width: 100%;
+        height: 14px;
+        background: #2d2d44;
+        border-radius: 40px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .traffic-progress-bar {
+        height: 100%;
+        width: var(--traffic-percent, 0%);
+        max-width: 100%;
+        min-width: 0;
+        border-radius: 40px;
+        background: linear-gradient(105deg, #8b5cf6 0%, #6d28d9 100%);
+        transition: width 0.3s ease;
+    }
+
     /* Стили для кнопок API */
     .api-buttons {
         display: flex;
@@ -140,7 +214,7 @@
     @media (max-width: 700px) {
         .top-bar { flex-direction: column; gap: 15px; text-align: center; }
         .api-buttons { flex-direction: column; align-items: stretch; }
-    }
+        .traffic-header { flex-direction: column; align-items: stretch; }
 </style>
 {% endblock %}
 
@@ -181,6 +255,58 @@
         <p style="margin-top: 20px; color: #94a3b8; text-align: center; font-size: 14px;">
             <i class="fas fa-info-circle"></i> Данные о статусе и продлении будут отображены в виде уведомлений.
         </p>
+    </div>
+
+    <!-- Секция с информацией о трафике пользователя -->
+    <div class="section traffic-card">
+        <div class="traffic-header">
+            <div>
+                <div class="section-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Использование трафика</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="traffic-grid">
+            <div class="traffic-stat">
+                <div class="traffic-stat-label">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Использовано</span>
+                </div>
+                <div class="traffic-stat-value">
+                    {{ traffic_used|default('0') }}<span class="traffic-stat-unit">{{ traffic_unit|default('ГБ') }}</span>
+                </div>
+            </div>
+
+            <div class="traffic-stat">
+                <div class="traffic-stat-label">
+                    <i class="fas fa-gauge-high"></i>
+                    <span>Лимит</span>
+                </div>
+                <div class="traffic-stat-value">
+                    {{ traffic_limit|default('0') }}<span class="traffic-stat-unit">{{ traffic_unit|default('ГБ') }}</span>
+                </div>
+            </div>
+
+            <div class="traffic-stat">
+                <div class="traffic-stat-label">
+                    <i class="fas fa-battery-three-quarters"></i>
+                    <span>Осталось</span>
+                </div>
+                <div class="traffic-stat-value">
+                    {{ traffic_left|default('0') }}<span class="traffic-stat-unit">{{ traffic_unit|default('ГБ') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="traffic-progress-info">
+            <span>Заполненность лимита</span>
+            <strong>{{ traffic_percent|default('0') }}%</strong>
+        </div>
+        <div class="traffic-progress-wrapper">
+            <div class="traffic-progress-bar" style="--traffic-percent: {{ traffic_percent|default('0') }}%;"></div>
+        </div>
     </div>
 
     <!-- Кнопка панели администратора (видна только админам) -->
