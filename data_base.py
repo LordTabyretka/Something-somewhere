@@ -38,4 +38,3 @@ def get_user(entered_login, password):
     login_user(user)
     flash(f'Добро пожаловать, {entered_login}!', 'success')
     return redirect(url_for('main_page.main'))
-

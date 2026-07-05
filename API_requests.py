@@ -4,9 +4,7 @@ import requests
 import os
 
 JWT = os.getenv("PANEL_API_KEY")
-url = "http://localhost:3003/api/users/by-username/"
-server_stats_url = os.getenv("SERVER_CHECK_URL")
-igor_port = "http://localhost:3003/api/users"
+url = "http://localhost:3002/api/"
 
 
 def get_last_day_of_next_month(expire_at_str):
@@ -29,9 +27,11 @@ def get_last_day_of_next_month(expire_at_str):
 
 def check_user_status(true_login):
     response = requests.get(
-        url+true_login,
+        url + "users/by-username/" + true_login,
         headers={
-            "Authorization": f"Bearer {JWT}"
+            "Authorization": f"Bearer {JWT}",
+            "X-Forwarded-For": "127.0.0.1",
+            "X-Forwarded-Proto": "https"
         }
     )
     if response.status_code == 200:
@@ -47,16 +47,34 @@ def check_user_status(true_login):
 
 
 def check_server_status():
-    if (requests.get(server_stats_url)).status_code == 200:
-        return True, 'Сервера работают'
-    return False, 'Сервера не отвечают'
-
+    response = requests.get(
+        url + "hosts",
+        headers={
+            "Authorization": f"Bearer {JWT}",
+            "X-Forwarded-For": "127.0.0.1",
+            "X-Forwarded-Proto": "https"
+        }
+    )
+    statuses = []
+    check = False
+    for host in response.json()["response"]:
+        if host['isDisabled']:
+            continue
+        server_status_url = 'https://' + host['address']
+        if (requests.get(server_status_url)).status_code == 200:
+            statuses.append(f'Сервер {host['remark']} активен')
+            check = True
+        else:
+            statuses.append(f'Сервер {host['remark']} не активен')
+    return check, '\n'.join(statuses)
 
 def extend(true_login):
     response = requests.get(
-        url + true_login,
+        url+ "users/by-username/" + true_login,
         headers={
-            "Authorization": f"Bearer {JWT}"
+            "Authorization": f"Bearer {JWT}",
+            "X-Forwarded-For": "127.0.0.1",
+            "X-Forwarded-Proto": "https"
         }
     )
 
@@ -68,14 +86,16 @@ def extend(true_login):
     else:
         return False, "Запрос не выполнен, сервер не отвечает"
 
-    patch_response = requests.patch(igor_port,
+    patch_response = requests.patch(url + "users",
         headers={
-          "Content-Type": "application/json",
-          "Authorization": f"Bearer {JWT}"
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {JWT}",
+            "X-Forwarded-For": "127.0.0.1",
+            "X-Forwarded-Proto": "https"
         },
         json={
-          "username": f"{true_login}",
-          "expireAt": new_expire
+            "username": f"{true_login}",
+            "expireAt": new_expire
         }
     )
 

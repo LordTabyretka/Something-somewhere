@@ -15,6 +15,7 @@ def login():
     else:
         return render_template("login.html")
 
+
 @login_page.route("/logout")
 @login_required
 def logout():
