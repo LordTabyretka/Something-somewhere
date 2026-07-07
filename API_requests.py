@@ -39,9 +39,10 @@ def check_user_status(true_login):
         response_data = data['response']
         status = response_data.get('status')
         expire_at = response_data.get('expireAt')
-        online_at = response_data.get('userTraffic', {}).get('onlineAt')
+        limit_traffic_bytes = response_data.get('trafficLimitBytes')
         used_traffic_bytes = response_data.get('userTraffic', {}).get('usedTrafficBytes')
-        return True, status
+
+        return True, status, expire_at, limit_traffic_bytes, used_traffic_bytes
     else:
         return False, "Запрос не выполнен, сервер не отвечает"
 
@@ -103,22 +104,3 @@ def extend(true_login):
         return True, f"Подписка продлена до {new_expire}"
     else:
         return False, f"Ошибка продления: {patch_response.status_code}"
-
-
-def check_limits(true_login):
-    response = requests.get(
-        url + "users/by-username/" + true_login,
-        headers={
-            "Authorization": f"Bearer {JWT}",
-            "X-Forwarded-For": "127.0.0.1",
-            "X-Forwarded-Proto": "https"
-        }
-    )
-    if response.status_code == 200:
-        data = response.json()
-        response_data = data['response']
-        limit_traffic_bytes = response_data.get('trafficLimitBytes')
-        used_traffic_bytes = response_data.get('userTraffic', {}).get('usedTrafficBytes')
-        return True, limit_traffic_bytes, used_traffic_bytes
-    else:
-        return False, None, None

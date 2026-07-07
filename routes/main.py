@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
 
-from API_requests import check_limits
+from API_requests import check_server_status, check_user_status
 
 main_page = Blueprint('main_page', __name__)
 
@@ -12,14 +12,7 @@ def bytes_to_gb(value):
     return round(value / 1024 ** 3, 2)
 
 
-@main_page.route("/main", methods=["GET", "POST"])
-@login_required
-def main():
-
-    true_login = current_user.true_login
-
-    success, limit_traffic_bytes, used_traffic_bytes = check_limits(true_login)
-    traffic_percent = 0
+def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
     if success:
 
         traffic_used = bytes_to_gb(used_traffic_bytes)
@@ -35,10 +28,31 @@ def main():
 
         if traffic_percent > 100:
             traffic_percent = 100
+
+        return traffic_used, traffic_limit, traffic_left, traffic_percent
+
+    traffic_used = 'Сервер не отвечает'
+    traffic_limit = 'Сервер не отвечает'
+    traffic_left = 'Сервер не отвечает'
+    traffic_percent = 0
+    return traffic_used, traffic_limit, traffic_left, traffic_percent
+
+
+@main_page.route("/main", methods=["GET", "POST"])
+@login_required
+def main():
+
+    true_login = current_user.true_login
+
+    success, status, expire_at, limit_traffic_bytes, used_traffic_bytes = check_user_status(true_login)
+    traffic_used, traffic_limit, traffic_left, traffic_percent = limit_calculations(success, limit_traffic_bytes, used_traffic_bytes)
+
+    check, msg = check_server_status()
+
+    if check:
+        check_messgage = 'Активен'
     else:
-        traffic_used = 'Сервер не отвечает'
-        traffic_limit = 'Сервер не отвечает'
-        traffic_left = 'Сервер не отвечает'
+        check_messgage = 'Неактивен'
 
     return render_template(
         "main.html",
@@ -47,4 +61,6 @@ def main():
         traffic_left=traffic_left,
         traffic_percent=traffic_percent,
         traffic_unit="ГБ",
+        server_status=check_messgage,
+        subscription_status=status
         )
