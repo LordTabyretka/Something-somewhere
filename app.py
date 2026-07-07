@@ -37,13 +37,7 @@ def load_user(user_id):
 def check_api():
     if request.method == "POST":
         if 'check server status' in request.form:
-            success, msg = check_server_status()
-            flash(msg, 'success' if success else 'error')
-            return redirect(url_for('main_page.main'))
-        elif 'check user status' in request.form:
-            true_login = current_user.true_login
-            success, msg = check_user_status(true_login)
-            flash(msg, 'success' if success else 'error')
+            check_server_status()
             return redirect(url_for('main_page.main'))
         elif 'extend' in request.form:
             true_login = current_user.true_login

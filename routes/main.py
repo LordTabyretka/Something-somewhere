@@ -5,6 +5,7 @@ from API_requests import check_server_status, check_user_status
 
 main_page = Blueprint('main_page', __name__)
 
+
 def bytes_to_gb(value):
     if value is None:
         return 0
@@ -13,8 +14,9 @@ def bytes_to_gb(value):
 
 
 def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
-    if success:
+    traffic_percent = 0
 
+    if success:
         traffic_used = bytes_to_gb(used_traffic_bytes)
         traffic_limit = bytes_to_gb(limit_traffic_bytes)
 
@@ -34,25 +36,34 @@ def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
     traffic_used = 'Сервер не отвечает'
     traffic_limit = 'Сервер не отвечает'
     traffic_left = 'Сервер не отвечает'
-    traffic_percent = 0
+
     return traffic_used, traffic_limit, traffic_left, traffic_percent
 
 
-@main_page.route("/main", methods=["GET", "POST"])
+@main_page.route("/main", methods=["GET"])
 @login_required
 def main():
-
     true_login = current_user.true_login
 
     success, status, expire_at, limit_traffic_bytes, used_traffic_bytes = check_user_status(true_login)
-    traffic_used, traffic_limit, traffic_left, traffic_percent = limit_calculations(success, limit_traffic_bytes, used_traffic_bytes)
 
-    check, msg = check_server_status()
+    traffic_used, traffic_limit, traffic_left, traffic_percent = limit_calculations(
+        success,
+        limit_traffic_bytes,
+        used_traffic_bytes
+    )
 
-    if check:
-        check_messgage = 'Активен'
+    server_success, server_msg = check_server_status()
+
+    if server_success:
+        server_status = 'Активен'
     else:
-        check_messgage = 'Неактивен'
+        server_status = 'Неактивен'
+
+    if status == "ACTIVE":
+        status = "Активна"
+    else:
+        status = "Неактивна"
 
     return render_template(
         "main.html",
@@ -61,6 +72,6 @@ def main():
         traffic_left=traffic_left,
         traffic_percent=traffic_percent,
         traffic_unit="ГБ",
-        server_status=check_messgage,
+        server_status=server_status,
         subscription_status=status
-        )
+    )
