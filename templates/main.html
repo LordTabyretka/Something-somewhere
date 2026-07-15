@@ -292,6 +292,214 @@
         background: linear-gradient(105deg, #a78bfa 0%, #7c3aed 100%);
     }
 
+    /* Блок пользовательских ссылок */
+    .links-card {
+        overflow: hidden;
+    }
+
+    #links-section {
+    scroll-margin-top: 24px;
+    }
+
+    .links-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .links-header .section-title {
+        margin-bottom: 0;
+    }
+
+    .links-actions {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .links-list {
+        max-height: 360px;
+        overflow-y: auto;
+        padding-right: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .links-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .links-list::-webkit-scrollbar-track {
+        background: #1e1e2f;
+        border-radius: 20px;
+    }
+
+    .links-list::-webkit-scrollbar-thumb {
+        background: #4c1d95;
+        border-radius: 20px;
+    }
+
+    .link-row {
+        display: grid;
+        grid-template-columns: 40px minmax(160px, 1fr) minmax(220px, 2fr) auto;
+        gap: 12px;
+        align-items: center;
+        background: #2d2d44;
+        border-radius: 24px;
+        padding: 14px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .link-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(139, 92, 246, 0.16);
+        color: #c4b5fd;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .link-name-input {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        border: 1px solid #334155;
+        background: #0f0f1a;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .link-name-input:focus {
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+    }
+
+    .link-url {
+        color: #c4b5fd;
+        text-decoration: none;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    .link-url:hover {
+        color: #ddd6fe;
+        text-decoration: underline;
+    }
+
+    .link-port {
+        display: block;
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .link-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .link-small-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: #1e1e2f;
+        color: #e2e8f0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .link-small-btn i {
+        color: #8b5cf6;
+    }
+
+    .link-small-btn:hover {
+        background: #3d3d5c;
+        transform: scale(1.05);
+    }
+
+    .link-small-btn.delete i {
+        color: #f87171;
+    }
+
+    .empty-links {
+        background: #2d2d44;
+        border-radius: 24px;
+        padding: 22px;
+        text-align: center;
+        color: #94a3b8;
+        border: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .empty-links i {
+        display: block;
+        font-size: 28px;
+        color: #8b5cf6;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 900px) {
+        .link-row {
+            grid-template-columns: 40px 1fr;
+        }
+
+        .link-url-wrapper,
+        .link-buttons {
+            grid-column: 2;
+        }
+
+        .link-buttons {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .links-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .links-actions {
+            width: 100%;
+        }
+
+        .links-actions .api-btn {
+            width: 100%;
+        }
+
+        .link-row {
+            grid-template-columns: 1fr;
+        }
+
+        .link-number,
+        .link-url-wrapper,
+        .link-buttons {
+            grid-column: auto;
+        }
+
+        .link-buttons {
+            justify-content: stretch;
+        }
+
+        .link-small-btn {
+            flex: 1;
+            border-radius: 18px;
+        }
+    }
+
     @media (max-width: 700px) {
         .top-bar {
             flex-direction: column;
@@ -407,7 +615,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ url_for('check_api') }}" class="inline-action-form">
+                <form method="POST" action="{{ url_for('main_page.check_api') }}" class="inline-action-form">
                     <button type="submit" name="check server status" class="api-btn status-check-btn">
                         <i class="fas fa-rotate-right"></i> Проверить
                     </button>
@@ -415,7 +623,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ url_for('check_api') }}">
+        <form method="POST" action="{{ url_for('main_page.check_api') }}">
             <div class="api-buttons">
                 <button type="submit" name="extend" class="api-btn">
                     <i class="fas fa-calendar-plus"></i> Продлить подписку
@@ -475,6 +683,101 @@
             <div class="traffic-progress-bar" style="--traffic-percent: {{ traffic_percent|default('0') }}%;"></div>
         </div>
     </div>
+
+    <!-- Секция пользовательских ссылок -->
+    <div id="links-section" class="section links-card">
+        <div class="links-header">
+            <div class="section-title">
+                <i class="fas fa-link"></i>
+                <span>Ссылки</span>
+            </div>
+
+            <form method="POST" action="{{ url_for('main_page.create_link') }}">
+                <button type="submit" class="api-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Создать ссылку
+                </button>
+            </form>
+        </div>
+
+        {% set links = user_links|default([], true) %}
+
+        {% if links|length > 0 %}
+            <div class="links-list">
+            {% for link in links %}
+                <form method="POST" action="{{ url_for('main_page.rename_link', link_id=link.id) }}" class="link-row">
+                    <div class="link-number">
+                        {{ loop.index }}
+                    </div>
+
+                    <div>
+                        <input
+                            type="text"
+                            name="link_name"
+                            class="link-name-input"
+                            value="{{ link.name }}"
+                            placeholder="Название ссылки"
+                        >
+                    </div>
+
+                    <div class="link-url-wrapper">
+                        <a href="{{ link.url }}" class="link-url" target="_blank" rel="noopener noreferrer">
+                            {{ link.url }}
+                        </a>
+
+                        {% if link.port_number %}
+                            <span class="link-port">
+                                Порт: {{ link.port_number }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="link-buttons">
+                        <button type="button" class="link-small-btn copy-link-btn" data-url="{{ link.url }}" title="Скопировать ссылку">
+                            <i class="fas fa-copy"></i>
+                        </button>
+
+                        <button type="submit" class="link-small-btn" title="Сохранить название">
+                            <i class="fas fa-save"></i>
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="link-small-btn delete"
+                            title="Удалить ссылку"
+                            formaction="{{ url_for('main_page.delete_link', link_id=link.id) }}"
+                            formmethod="POST"
+                        >
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </form>
+            {% endfor %}
+
+
+
+            </div>
+        {% else %}
+            <div class="empty-links">
+                <i class="fas fa-link-slash"></i>
+                <span>Пока нет созданных ссылок</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.querySelectorAll('.copy-link-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const url = button.dataset.url;
+
+                if (!url) {
+                    return;
+                }
+
+                navigator.clipboard.writeText(url);
+            });
+        });
+    </script>
 
     <!-- Кнопка панели администратора (видна только админам) -->
     {% if current_user.is_admin %}

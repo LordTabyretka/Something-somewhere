@@ -1,9 +1,8 @@
-from flask import Flask, redirect, url_for, flash, request
+from flask import Flask
 from flask_migrate import Migrate
 
-from API_requests import check_server_status, check_user_status, extend
 from flask_models import db, User
-from flask_login import LoginManager, login_required, current_user
+from flask_login import LoginManager
 from routes.admin import admin
 from routes.login import login_page
 from routes.main import main_page
@@ -32,21 +31,6 @@ login_manager.login_view = 'login_page.login'
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
-@app.route("/check-api", methods=["POST", "GET"])
-@login_required
-def check_api():
-    if request.method == "POST":
-        if 'check server status' in request.form:
-            # check_server_status()
-            return redirect(url_for('main_page.main'))
-        elif 'extend' in request.form:
-            true_login = current_user.true_login
-            success, msg = extend(true_login)
-            flash(msg, 'success' if success else 'error')
-            return redirect(url_for('main_page.main'))
-    return redirect(url_for('main_page.main'))
 
 
 if __name__ == '__main__':
