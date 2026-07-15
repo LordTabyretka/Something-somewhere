@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for, flash, request
+from flask_migrate import Migrate
 
 from API_requests import check_server_status, check_user_status, extend
 from flask_models import db, User
@@ -15,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = os.getenv('APP_KEY')
 
 db.init_app(app)
+migrate = Migrate(app, db)
 
 with app.app_context():
     db.create_all()
@@ -37,7 +39,7 @@ def load_user(user_id):
 def check_api():
     if request.method == "POST":
         if 'check server status' in request.form:
-            check_server_status()
+            # check_server_status()
             return redirect(url_for('main_page.main'))
         elif 'extend' in request.form:
             true_login = current_user.true_login

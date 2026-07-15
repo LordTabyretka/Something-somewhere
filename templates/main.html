@@ -136,6 +136,18 @@
     .status-value.active {
         color: #86efac;
     }
+    .status-value.inactive {
+        color: #fca5a5;
+    }
+    .status-link {
+        color: #c4b5fd;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .status-link:hover {
+        color: #ddd6fe;
+        text-decoration: underline;
+    }
     .inline-action-form {
         margin: 0;
         flex-shrink: 0;
@@ -335,6 +347,9 @@
         </div>
 
         <div class="subscription-status-list">
+            {% set subscription_status_value = subscription_status|default('Неизвестно') %}
+            {% set server_status_value = server_status|default('Активен') %}
+
             <div class="status-row">
                 <div class="status-content">
                     <div class="status-icon">
@@ -342,7 +357,39 @@
                     </div>
                     <div class="status-text">
                         <span class="status-label">Статус подписки</span>
-                        <strong class="status-value">{{ subscription_status|default('Неизвестно') }}</strong>
+                        <strong class="status-value {% if subscription_status_value == 'Активна' or subscription_status_value == 'ACTIVE' %}active{% elif subscription_status_value == 'Неактивна' or subscription_status_value == 'DISABLED' or subscription_status_value == 'EXPIRED' %}inactive{% endif %}">
+                            {{ subscription_status_value }}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-row">
+                <div class="status-content">
+                    <div class="status-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="status-text">
+                        <span class="status-label">Активна до</span>
+                        <strong class="status-value">{{ subscription_expire_at|default('—') }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-row">
+                <div class="status-content">
+                    <div class="status-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="status-text">
+                        <span class="status-label">Ссылка на подписку</span>
+                        {% if subscription_link %}
+                            <a href="{{ subscription_link }}" class="status-value status-link" target="_blank" rel="noopener noreferrer">
+                                {{ subscription_link }}
+                            </a>
+                        {% else %}
+                            <strong class="status-value">Ссылка будет добавлена позже</strong>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -354,7 +401,9 @@
                     </div>
                     <div class="status-text">
                         <span class="status-label">Статус серверов</span>
-                        <strong class="status-value active">{{ server_status|default('Неизвестно') }}</strong>
+                        <strong class="status-value {% if server_status_value == 'Активны' or server_status_value == 'Активно' %}active{% elif server_status_value == 'Неактивен' or server_status_value == 'Не отвечает' %}inactive{% endif %}">
+                            {{ server_status_value }}
+                        </strong>
                     </div>
                 </div>
 

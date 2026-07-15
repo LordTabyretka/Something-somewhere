@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
 
@@ -11,6 +13,17 @@ def bytes_to_gb(value):
         return 0
 
     return round(value / 1024 ** 3, 2)
+
+
+def format_expire_at(expire_at):
+    if not expire_at:
+        return '—'
+
+    try:
+        dt = datetime.fromisoformat(expire_at.replace('Z', '+00:00'))
+        return dt.strftime('%d.%m.%Y %H:%M')
+    except ValueError:
+        return expire_at
 
 
 def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
@@ -56,9 +69,9 @@ def main():
     server_success, server_msg = check_server_status()
 
     if server_success:
-        server_status = 'Активен'
+        server_status = 'Активны'
     else:
-        server_status = 'Неактивен'
+        server_status = 'Неактивны'
 
     if status == "ACTIVE":
         status = "Активна"
@@ -73,5 +86,7 @@ def main():
         traffic_percent=traffic_percent,
         traffic_unit="ГБ",
         server_status=server_status,
-        subscription_status=status
+        subscription_status=status,
+        subscription_expire_at=format_expire_at(expire_at),
+        subscription_link=current_user.subscription_link
     )
