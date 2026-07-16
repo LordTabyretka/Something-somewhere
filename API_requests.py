@@ -41,8 +41,9 @@ def check_user_status(true_login):
         expire_at = response_data.get('expireAt')
         limit_traffic_bytes = response_data.get('trafficLimitBytes')
         used_traffic_bytes = response_data.get('userTraffic', {}).get('usedTrafficBytes')
+        subscription_url = response_data.get('subscriptionUrl')
 
-        return True, status, expire_at, limit_traffic_bytes, used_traffic_bytes
+        return True, status, expire_at, limit_traffic_bytes, used_traffic_bytes, subscription_url
     else:
         return False, "Запрос не выполнен, сервер не отвечает"
 

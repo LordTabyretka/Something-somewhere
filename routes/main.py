@@ -13,7 +13,7 @@ main_page = Blueprint('main_page', __name__)
 def main():
     true_login = current_user.true_login
 
-    success, status, expire_at, limit_traffic_bytes, used_traffic_bytes = check_user_status(true_login)
+    success, status, expire_at, limit_traffic_bytes, used_traffic_bytes, subscription_url = check_user_status(true_login)
 
     traffic_used, traffic_limit, traffic_left, traffic_percent = limit_calculations(
         success,
@@ -43,7 +43,7 @@ def main():
         server_status=server_status,
         subscription_status=status,
         subscription_expire_at=format_expire_at(expire_at),
-        subscription_link=current_user.subscription_link,
+        subscription_link=subscription_url,
         user_links=current_user.links
     )
 
