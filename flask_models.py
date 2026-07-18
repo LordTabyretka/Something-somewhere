@@ -12,7 +12,6 @@ class User(db.Model, UserMixin):
     login = db.Column(db.String(80), unique=True, nullable=False)
     true_login = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    subscription_link = db.Column(db.String(500),nullable=False,default='',server_default='')
     is_admin = db.Column(db.Boolean,default=False,nullable=False,server_default='0')
     links = db.relationship('UserLink',backref='user',lazy=True,cascade='all, delete-orphan')
 
