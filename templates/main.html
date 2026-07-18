@@ -71,9 +71,16 @@
                         <span class="status-label">Ссылка на подписку</span>
 
                         {% if subscription_link %}
-                            <a href="{{ subscription_link }}" class="status-value status-link" target="_blank" rel="noopener noreferrer">
-                                {{ subscription_link }}
-                            </a>
+                            <div class="subscription-link-line">
+                                <a href="{{ subscription_link }}" class="status-value status-link" target="_blank" rel="noopener noreferrer">
+                                    {{ subscription_link }}
+                                </a>
+
+                                <button type="button" class="api-btn qr-open-btn" id="show-subscription-qr">
+                                    <i class="fas fa-qrcode"></i>
+                                    Показать QR
+                                </button>
+                            </div>
                         {% else %}
                             <strong class="status-value">Ссылка недоступна</strong>
                         {% endif %}
@@ -264,19 +271,27 @@
         {% endif %}
     </div>
 
-    <script>
-        document.querySelectorAll('.copy-link-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const url = button.dataset.url;
+    {% if subscription_link %}
+        <div class="qr-modal" id="subscription-qr-modal">
+            <div class="qr-modal-window">
+                <button type="button" class="qr-modal-close" id="close-subscription-qr" aria-label="Закрыть">
+                    &times;
+                </button>
 
-                if (!url) {
-                    return;
-                }
+                <div class="qr-modal-title">
+                    QR-код подписки
+                </div>
 
-                navigator.clipboard.writeText(url);
-            });
-        });
-    </script>
+                <div class="qr-modal-subtitle">
+                    Отсканируйте код, чтобы открыть ссылку на подписку
+                </div>
+
+                <div class="qr-modal-code">
+                    <div id="subscription-qr"></div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     {% if current_user.is_admin %}
         <div class="admin-panel-link">
@@ -285,4 +300,81 @@
             </a>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+    document.querySelectorAll('.copy-link-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const url = button.dataset.url;
+
+            if (!url) {
+                return;
+            }
+
+            navigator.clipboard.writeText(url);
+        });
+    });
+
+    const qrButton = document.getElementById('show-subscription-qr');
+    const qrModal = document.getElementById('subscription-qr-modal');
+    const qrCloseButton = document.getElementById('close-subscription-qr');
+    const qrContainer = document.getElementById('subscription-qr');
+
+    const subscriptionUrl = {{ subscription_link|default('', true)|tojson }};
+
+    let qrWasCreated = false;
+
+    function openQrModal() {
+        if (!qrModal || !qrContainer || !subscriptionUrl) {
+            return;
+        }
+
+        if (!qrWasCreated) {
+            qrContainer.innerHTML = '';
+
+            new QRCode(qrContainer, {
+                text: subscriptionUrl,
+                width: 220,
+                height: 220
+            });
+
+            qrWasCreated = true;
+        }
+
+        qrModal.classList.add('show');
+    }
+
+    function closeQrModal() {
+        if (!qrModal) {
+            return;
+        }
+
+        qrModal.classList.remove('show');
+    }
+
+    if (qrButton) {
+        qrButton.addEventListener('click', openQrModal);
+    }
+
+    if (qrCloseButton) {
+        qrCloseButton.addEventListener('click', closeQrModal);
+    }
+
+    if (qrModal) {
+        qrModal.addEventListener('click', function(event) {
+            if (event.target === qrModal) {
+                closeQrModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeQrModal();
+        }
+    });
+</script>
 {% endblock %}

@@ -16,7 +16,6 @@ def admin_panel():
         new_login = request.form.get('login')
         password = request.form.get('password')
         true_login = request.form.get('true_login')
-        subscription_link = request.form.get('subscription_link')
 
         if 'create' in request.form:
             is_admin = request.form.get('is_admin') == 'yes'
