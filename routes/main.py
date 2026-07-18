@@ -1,12 +1,13 @@
 from flask import render_template, Blueprint, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-
+import os
 from API_requests import check_server_status, check_user_status, extend
-from main_page_service import limit_calculations, format_expire_at, create_link_for_user, rename_user_link, \
-    delete_user_link
+from main_page_service import limit_calculations, format_expire_at, create_port_for_user, rename_user_port, \
+    delete_user_port, build_user_port_rows
 
 main_page = Blueprint('main_page', __name__)
 
+source_url = os.getenv('SOURCE_URL')
 
 @main_page.route("/main", methods=["GET"])
 @login_required
@@ -44,36 +45,32 @@ def main():
         subscription_status=status,
         subscription_expire_at=format_expire_at(expire_at),
         subscription_link=subscription_url,
-        user_links=current_user.links
+        user_ports=build_user_port_rows(current_user, source_url)
     )
 
 
-@main_page.route("/links/create", methods=["POST"])
+@main_page.route("/ports/create", methods=["POST"])
 @login_required
-def create_link():
-    success, msg = create_link_for_user(current_user)
-
+def create_port():
+    success, msg = create_port_for_user(current_user)
     flash(msg, 'success' if success else 'error')
-
-    return redirect(url_for('main_page.main') + '#links-section')
-
-@main_page.route("/links/<int:link_id>/rename", methods=["POST"])
-@login_required
-def rename_link(link_id):
-    new_name = request.form.get("link_name", '')
-
-    success, msg = rename_user_link(current_user, link_id, new_name)
-    flash(msg, 'success' if success else 'error')
-
     return redirect(url_for('main_page.main') + '#links-section')
 
 
-@main_page.route("/links/<int:link_id>/delete", methods=["POST"])
+@main_page.route("/ports/<int:port_id>/rename", methods=["POST"])
 @login_required
-def delete_link(link_id):
-    success, msg = delete_user_link(current_user, link_id)
+def rename_port(port_id):
+    new_name = request.form.get("link_name", "")
+    success, msg = rename_user_port(current_user, port_id, new_name)
     flash(msg, 'success' if success else 'error')
+    return redirect(url_for('main_page.main') + '#links-section')
 
+
+@main_page.route("/ports/<int:port_id>/delete", methods=["POST"])
+@login_required
+def delete_port(port_id):
+    success, msg = delete_user_port(current_user, port_id)
+    flash(msg, 'success' if success else 'error')
     return redirect(url_for('main_page.main') + '#links-section')
 
 
