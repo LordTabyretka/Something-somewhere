@@ -1,9 +1,8 @@
 from flask import render_template, Blueprint, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 import os
-from API_requests import check_server_status, check_user_status, extend
-from main_page_service import limit_calculations, format_expire_at, create_port_for_user, rename_user_port, \
-    delete_user_port, build_user_port_rows
+from API_requests import extend
+from main_page_service import create_port_for_user, rename_user_port, delete_user_port, main_page_render_service
 
 main_page = Blueprint('main_page', __name__)
 
@@ -12,40 +11,11 @@ source_url = os.getenv('SOURCE_URL')
 @main_page.route("/main", methods=["GET"])
 @login_required
 def main():
-    true_login = current_user.true_login
-
-    success, status, expire_at, limit_traffic_bytes, used_traffic_bytes, subscription_url = check_user_status(true_login)
-
-    traffic_used, traffic_limit, traffic_left, traffic_percent = limit_calculations(
-        success,
-        limit_traffic_bytes,
-        used_traffic_bytes
-    )
-
-    server_success, server_msg = check_server_status()
-
-    if server_success:
-        server_status = 'Активны'
-    else:
-        server_status = 'Неактивны'
-
-    if status == "ACTIVE":
-        status = "Активна"
-    else:
-        status = "Неактивна"
+    template_data = main_page_render_service(current_user)
 
     return render_template(
         "main.html",
-        traffic_used=traffic_used,
-        traffic_limit=traffic_limit,
-        traffic_left=traffic_left,
-        traffic_percent=traffic_percent,
-        traffic_unit="ГБ",
-        server_status=server_status,
-        subscription_status=status,
-        subscription_expire_at=format_expire_at(expire_at),
-        subscription_link=subscription_url,
-        user_ports=build_user_port_rows(current_user, source_url)
+        **template_data
     )
 
 
