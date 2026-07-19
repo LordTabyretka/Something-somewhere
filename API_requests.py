@@ -4,7 +4,7 @@ import requests
 import os
 
 JWT = os.getenv("PANEL_API_KEY")
-url = "http://localhost:3002/api/"
+url = os.getenv("ADMIN_URL")
 
 
 def get_last_day_of_next_month(expire_at_str):

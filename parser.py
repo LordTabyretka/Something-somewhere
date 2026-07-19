@@ -1,15 +1,35 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 import requests
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
 
-def flag_to_country_code(flag):
-    flag = flag.strip()
+def clean_text(text):
+    return " ".join(text.split())
 
-    return ''.join(
-        chr(ord(ch) - ord('🇦') + ord('A'))
-        for ch in flag
-    )
+
+def get_node_name(dot):
+    parts = []
+
+    for element in dot.next_siblings:
+        if getattr(element, "name", None) == "a":
+            break
+
+        if isinstance(element, NavigableString):
+            text = str(element)
+        else:
+            text = element.get_text(" ", strip=True)
+
+        text = clean_text(text)
+
+        if text:
+            parts.append(text)
+
+    node_name = clean_text(" ".join(parts))
+
+    if node_name:
+        return node_name
+
+    return "Сервер"
 
 
 def change_port_in_url(proxy_url, new_port):
@@ -70,8 +90,7 @@ def get_user_url(url, port):
         if not dot or not link:
             continue
 
-        flag = dot.parent.get_text(strip=True)
-        country = flag_to_country_code(flag)
+        node_name = get_node_name(dot)
 
         href = link.get('href')
 
@@ -81,7 +100,7 @@ def get_user_url(url, port):
         href_with_user_port = change_port_in_url(href, port)
 
         result.append({
-            'country': country,
+            'country': node_name,
             'url': href_with_user_port
         })
 
