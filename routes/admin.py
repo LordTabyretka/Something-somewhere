@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, Blueprint
 from flask_login import current_user, login_required
+
 from data_base import delete_user, create_user
 
 admin = Blueprint('admin', __name__)

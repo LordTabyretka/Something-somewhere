@@ -1,5 +1,6 @@
-from bs4 import BeautifulSoup, NavigableString
 import requests
+
+from bs4 import BeautifulSoup, NavigableString
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
 
@@ -67,12 +68,7 @@ def get_user_url(url, port):
         return []
 
     try:
-        response = requests.get(
-            url,
-            timeout=10,
-            headers={"User-Agent": "Mozilla/5.0"}
-        )
-
+        response = requests.get(url)
         response.raise_for_status()
     except requests.RequestException:
         return []

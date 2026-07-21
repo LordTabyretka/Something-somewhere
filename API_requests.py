@@ -1,7 +1,8 @@
 import calendar
-from datetime import datetime
-import requests
 import os
+import requests
+
+from datetime import datetime
 
 JWT = os.getenv("PANEL_API_KEY")
 url = os.getenv("ADMIN_URL")
@@ -45,7 +46,7 @@ def check_user_status(true_login):
 
         return True, status, expire_at, limit_traffic_bytes, used_traffic_bytes, subscription_url
     else:
-        return False, "Запрос не выполнен, сервер не отвечает"
+        return False, "Запрос не выполнен, сервер не отвечает", None, None, None, None
 
 
 def check_server_status():

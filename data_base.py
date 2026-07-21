@@ -1,6 +1,5 @@
 from flask import flash, redirect, url_for
 from flask_login import login_user
-
 from flask_models import db, User
 
 

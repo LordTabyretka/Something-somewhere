@@ -1,11 +1,13 @@
 import os
+
 from datetime import datetime
 
-from flask_login import current_user
+from flask_models import db, UserPort
 
 from API_requests import check_user_status, check_server_status
-from flask_models import db, UserPort
 from parser import get_user_url
+
+source_url = os.getenv('SOURCE_URL')
 
 start_port, end_port = 20000, 21000
 
@@ -37,14 +39,7 @@ def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
 
         traffic_left = round(traffic_limit - traffic_used, 2)
 
-        if traffic_left < 0:
-            traffic_left = 0
-
-        if traffic_limit > 0:
-            traffic_percent = round((traffic_used / traffic_limit) * 100)
-
-        if traffic_percent > 100:
-            traffic_percent = 100
+        traffic_percent = round((traffic_used / traffic_limit) * 100)
 
         return traffic_used, traffic_limit, traffic_left, traffic_percent
 
@@ -147,9 +142,7 @@ def main_page_render_service(user):
 
     server_success, server_msg = check_server_status()
 
-    server_status, subscription_status = status_check(server_success,status,)
-
-    source_url = os.getenv('SOURCE_URL')
+    server_status, subscription_status = status_check(server_success, status)
 
     return {
         "traffic_used": traffic_used,

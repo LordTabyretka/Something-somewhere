@@ -1,6 +1,8 @@
+import os
+
 from flask import render_template, Blueprint, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-import os
+
 from API_requests import extend
 from main_page_service import create_port_for_user, rename_user_port, delete_user_port, main_page_render_service
 

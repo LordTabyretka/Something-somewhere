@@ -1,13 +1,14 @@
-from flask import Flask
-from flask_migrate import Migrate
+import os
 
-from flask_models import db, User
+from dotenv import load_dotenv
+from flask import Flask
 from flask_login import LoginManager
+from flask_migrate import Migrate
+from flask_models import db, User
+
 from routes.admin import admin
 from routes.login import login_page
 from routes.main import main_page
-from dotenv import load_dotenv
-import os
 
 load_dotenv()
 app = Flask(__name__)
