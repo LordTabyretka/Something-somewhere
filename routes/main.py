@@ -47,13 +47,10 @@ def delete_port(port_id):
     return redirect(url_for('main_page.main') + '#links-section')
 
 
-@main_page.route("/check-api", methods=["POST", "GET"])
+@main_page.route("/extend-access", methods=["POST"])
 @login_required
-def check_api():
-    if request.method == "POST":
-        if 'extend' in request.form:
-            true_login = current_user.true_login
-            success, msg = extend(true_login)
-            flash(msg, 'success' if success else 'error')
-            return redirect(url_for('main_page.main'))
+def extend_access():
+    true_login = current_user.true_login
+    success, msg = extend(true_login)
+    flash(msg, 'success' if success else 'error')
     return redirect(url_for('main_page.main'))
