@@ -1,5 +1,3 @@
-from flask import flash, redirect, url_for
-from flask_login import login_user
 from flask_models import db, User
 
 
@@ -31,9 +29,7 @@ def delete_user(login):
 def get_user(entered_login, password):
     user = User.query.filter_by(login=entered_login).first()
     if not user or not user.check_password(password):
-        flash('Неверно введён логин или пароль', 'error')
-        return redirect(url_for('login_page.login'))
+        return None, 'Неверно введён логин или пароль'
+    return user, None
 
-    login_user(user)
-    flash(f'Добро пожаловать, {entered_login}!', 'success')
-    return redirect(url_for('main_page.main'))
+

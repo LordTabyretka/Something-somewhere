@@ -1,5 +1,5 @@
 from flask import render_template, request, Blueprint, flash, redirect, url_for
-from flask_login import login_required, logout_user
+from flask_login import login_required, logout_user, login_user
 
 from data_base import get_user
 
@@ -11,9 +11,18 @@ def login():
     if request.method == 'POST':
         entered_login = request.form.get('login')
         password = request.form.get('password')
-        return get_user(entered_login, password)
-    else:
-        return render_template("login.html")
+        user, error = get_user(entered_login, password)
+
+        if error:
+            flash('Неверно введён логин или пароль', 'error')
+            return redirect(url_for('login_page.login'))
+
+        login_user(user)
+        flash(f'Добро пожаловать, {entered_login}!', 'success')
+
+        return redirect(url_for('main_page.main'))
+
+    return render_template("login.html")
 
 
 @login_page.route("/logout")
