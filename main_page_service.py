@@ -2,14 +2,11 @@ import os
 
 from datetime import datetime
 
-from flask_models import db, UserPort
 
 from API_requests import check_user_status, check_server_status
-from parser import get_user_url
+from data_base import build_user_port_rows
 
 source_url = os.getenv('SOURCE_URL')
-
-start_port, end_port = 20000, 21000
 
 
 def bytes_to_gb(value):
@@ -48,75 +45,6 @@ def limit_calculations(success, limit_traffic_bytes, used_traffic_bytes):
     traffic_left = 'Сервер не отвечает'
 
     return traffic_used, traffic_limit, traffic_left, traffic_percent
-
-
-def create_port_for_user(user, name='Новая ссылка'):
-    last_port = UserPort.query.order_by(UserPort.port_number.desc()).first()
-
-    if last_port is None:
-        next_port = start_port
-    else:
-        next_port = last_port.port_number + 1
-
-    if next_port >= end_port:
-        return False, "Свободные порты закончились"
-
-    new_port = UserPort(
-        user_id=user.id,
-        name=name,
-        port_number=next_port
-    )
-
-    db.session.add(new_port)
-    db.session.commit()
-
-    return True, "Ссылка создана"
-
-
-def rename_user_port(user, port_id, new_name):
-    user_port = UserPort.query.filter_by(id=port_id, user_id=user.id).first()
-
-    if user_port is None:
-        return False, "Порт не найден"
-
-    new_name = new_name.strip()
-    if not new_name:
-        return False, "Название не может быть пустым"
-
-    user_port.name = new_name
-    db.session.commit()
-
-    return True, "Название сохранено"
-
-
-def delete_user_port(user, port_id):
-    user_port = UserPort.query.filter_by(id=port_id, user_id=user.id).first()
-
-    if user_port is None:
-        return False, "Порт не найден"
-
-    db.session.delete(user_port)
-    db.session.commit()
-
-    return True, "Ссылка удалена"
-
-
-def build_user_port_rows(user, source_url):
-    user_ports = UserPort.query.filter_by(user_id=user.id).order_by(UserPort.port_number).all()
-
-    result = []
-
-    for user_port in user_ports:
-        generated_links = get_user_url(source_url, user_port.port_number)
-
-        result.append({
-            "id": user_port.id,
-            "name": user_port.name,
-            "port_number": user_port.port_number,
-            "links": generated_links
-        })
-
-    return result
 
 
 def status_check(server_success, status):

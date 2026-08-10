@@ -4,7 +4,8 @@ from flask import render_template, Blueprint, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 
 from API_requests import extend
-from main_page_service import create_port_for_user, rename_user_port, delete_user_port, main_page_render_service
+from data_base import delete_user_port, rename_user_port, create_port_for_user
+from main_page_service import main_page_render_service
 
 main_page = Blueprint('main_page', __name__)
 
