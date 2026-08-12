@@ -3,7 +3,7 @@ import os
 from flask import render_template, Blueprint, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 
-from API_requests import extend
+from API_requests import extend, check_server_status
 from data_base import delete_user_port, rename_user_port, create_port_for_user
 from main_page_service import main_page_render_service
 
@@ -53,4 +53,13 @@ def extend_access():
     true_login = current_user.true_login
     success, msg = extend(true_login)
     flash(msg, 'success' if success else 'error')
+    return redirect(url_for('main_page.main'))
+
+
+@main_page.route("/check-server-status", methods=["POST"])
+@login_required
+def check_servers():
+    success, msg = check_server_status()
+    flash(msg, 'success' if success else 'error')
+
     return redirect(url_for('main_page.main'))
