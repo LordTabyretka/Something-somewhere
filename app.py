@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
@@ -9,11 +7,12 @@ from flask_models import db, User
 from routes.admin import admin
 from routes.login import login_page
 from routes.main import main_page
+from config import SECRET_KEY
 
 load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SECRET_KEY'] = os.getenv('APP_KEY')
+app.config['SECRET_KEY'] = SECRET_KEY
 
 db.init_app(app)
 migrate = Migrate(app, db)

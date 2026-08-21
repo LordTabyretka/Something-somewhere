@@ -1,16 +1,14 @@
 import calendar
-import os
 import requests
 
 from datetime import datetime
 
-JWT = os.getenv("PANEL_API_KEY")
-url = os.getenv("ADMIN_URL")
+from config import JWT, URL
 
 
 def request_panel(endpoint):
     response = requests.get(
-        url + endpoint,
+        URL + endpoint,
         headers={
             "Authorization": f"Bearer {JWT}",
             "X-Forwarded-For": "127.0.0.1",
@@ -84,7 +82,7 @@ def extend(true_login):
     expire_at = response_data.get('expireAt')
     new_expire = get_last_day_of_next_month(expire_at)
 
-    patch_response = requests.patch(url + "users",
+    patch_response = requests.patch(URL + "users",
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {JWT}",
