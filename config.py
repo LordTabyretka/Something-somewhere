@@ -9,3 +9,5 @@ URL = os.getenv("ADMIN_URL")
 SOURCE_URL = os.getenv('SOURCE_URL')
 SECRET_KEY = os.getenv('APP_KEY')
 
+DATABASE_URL=os.getenv('DATABASE_URL')
+

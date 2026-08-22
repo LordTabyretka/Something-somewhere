@@ -7,11 +7,11 @@ from flask_models import db, User
 from routes.admin import admin
 from routes.login import login_page
 from routes.main import main_page
-from config import SECRET_KEY
+from config import SECRET_KEY, DATABASE_URL
 
 load_dotenv()
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SECRET_KEY'] = SECRET_KEY
 
 db.init_app(app)
