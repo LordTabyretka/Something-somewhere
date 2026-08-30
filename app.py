@@ -7,7 +7,7 @@ from flask_models import db, User
 from routes.admin import admin
 from routes.login import login_page
 from routes.main import main_page
-from config import SECRET_KEY, DATABASE_URL
+from config import SECRET_KEY, DATABASE_URL, DEBUG, HOST, PORT
 
 load_dotenv()
 app = Flask(__name__)
@@ -34,4 +34,8 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(
+        host=HOST,
+        port=PORT,
+        debug=DEBUG
+    )

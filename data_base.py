@@ -1,7 +1,7 @@
 from flask_models import db, User, UserPort
 from parser import get_user_url
 
-start_port, end_port = 20000, 21000
+start_port, end_port = 20200, 20900
 
 def create_user(new_login, true_login, password, is_admin=False):
     if not new_login or not password:

@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${PORT:-5000}:${PORT:-5000}"
+
+    environment:
+      APP_KEY: ${APP_KEY}
+      PANEL_API_KEY: ${PANEL_API_KEY}
+      ADMIN_URL: ${ADMIN_URL}
+      SOURCE_URL: ${SOURCE_URL}
+
+      DEBUG: ${DEBUG:-False}
+      HOST: ${HOST:-0.0.0.0}
+      PORT: ${PORT:-5000}
+
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
