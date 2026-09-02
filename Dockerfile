@@ -1,10 +1,24 @@
-FROM python:3.14-slim
+FROM python:3.14-slim AS builder
 
-WORKDIR /app
+WORKDIR /build
+
+RUN python -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+
+FROM python:3.14-alpine
+
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 
