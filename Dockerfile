@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 
-FROM python:3.14-alpine
+FROM python:3.14-slim
 
 WORKDIR /app
 
@@ -24,4 +24,5 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+ENTRYPOINT ["python"]
+CMD ["app.py"]
