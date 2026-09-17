@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Глобальные стили — тёмная тема */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -76,24 +75,36 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Контейнер для тостов (всегда внизу справа) -->
+
     <div class="toast-container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="toast toast-{{ category }}">
-                        <div class="toast-icon">
-                            <i class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
-                        </div>
-                        <div class="toast-message">{{ message }}</div>
-                        <button class="toast-close" onclick="this.parentElement.remove();">&times;</button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        {% if notification %}
+            <div class="toast toast-{{ notification.category }}">
+                <div class="toast-icon">
+                    <i class="fas
+                        {% if notification.category == 'success' %}
+                            fa-check-circle
+                        {% elif notification.category == 'error' %}
+                            fa-exclamation-circle
+                        {% else %}
+                            fa-info-circle
+                        {% endif %}
+                    "></i>
+                </div>
+
+                <div class="toast-message">
+                    {{ notification.message }}
+                </div>
+
+                <button
+                    class="toast-close"
+                    onclick="this.parentElement.remove();"
+                >
+                    &times;
+                </button>
+            </div>
+        {% endif %}
     </div>
 
-    <!-- Основной контент -->
     <div class="container">
         {% block content %}{% endblock %}
     </div>

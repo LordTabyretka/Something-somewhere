@@ -118,7 +118,7 @@
         <p>Введите свои учётные данные</p>
     </div>
 
-    <form method="POST" action="{{ url_for('login_page.login') }}">
+    <form id="login-form" method="POST" action="{{ url_for('login_page.login') }}">
         <div class="input-group">
             <label class="input-label" for="login">Логин</label>
             <div class="input-wrapper">
@@ -140,4 +140,35 @@
         </button>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const loginForm = document.getElementById('login-form');
+
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(loginForm);
+
+        try {
+            const response = await fetch(loginForm.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.replace(data.redirect_url);
+                return;
+            }
+
+            alert(data.message);
+        } catch (error) {
+            console.error('Ошибка авторизации:', error);
+            alert('Не удалось выполнить вход');
+        }
+    });
+</script>
 {% endblock %}
